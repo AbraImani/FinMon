@@ -5,6 +5,7 @@ export type Currency = 'USD' | 'CDF'
 export type ExpenseStatus = 'pending' | 'approved' | 'rejected'
 export type DailyClosureStatus = 'submitted' | 'reviewed' | 'locked'
 export type AuditModule = 'transactions' | 'expenses' | 'closures' | 'rates'
+export type InvitationStatus = 'pending' | 'accepted' | 'expired'
 
 export interface AuditLogRecord {
   actorId: string
@@ -25,6 +26,7 @@ export interface UserProfile {
   role: UserRole
   status: AccountStatus
   extensionIds: string[]
+  profileStage?: 'invited' | 'completed'
   createdAt?: unknown
   updatedAt?: unknown
 }
@@ -59,6 +61,30 @@ export interface ExchangeRateRecord {
   updatedAt?: unknown
   updatedById?: string
   updatedByName?: string
+}
+
+export interface ExtensionRecord {
+  name: string
+  code: string
+  city: string
+  status: 'active' | 'inactive'
+  managerName: string
+  createdAt?: unknown
+  updatedAt?: unknown
+}
+
+export interface InvitationRecord {
+  email: string
+  fullName: string
+  role: UserRole
+  extensionIds: string[]
+  status: InvitationStatus
+  inviteCode: string
+  invitationLink: string
+  createdAt?: unknown
+  createdById: string
+  createdByName: string
+  acceptedAt?: unknown
 }
 
 export interface ExpenseRecord {

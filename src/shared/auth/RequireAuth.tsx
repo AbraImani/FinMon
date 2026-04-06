@@ -16,7 +16,13 @@ export function RequireAuth() {
   }
 
   if (!user || !profile) {
-    return <Navigate to="/connexion" replace state={{ from: location.pathname }} />
+    const loginPath = location.pathname.startsWith('/admin')
+      ? '/admin/connexion'
+      : location.pathname.startsWith('/agent')
+        ? '/agent/connexion'
+        : '/connexion'
+
+    return <Navigate to={loginPath} replace state={{ from: location.pathname }} />
   }
 
   if (profile.status === 'disabled') {

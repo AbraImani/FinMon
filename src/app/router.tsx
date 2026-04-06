@@ -1,7 +1,9 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { RequireAuth } from '../shared/auth/RequireAuth'
 import { RequireRole } from '../shared/auth/RequireRole'
-import { LoginPage } from '../modules/auth/pages/LoginPage'
+import { AuthLandingPage } from '../modules/auth/pages/AuthLandingPage'
+import { AdminLoginPage } from '../modules/auth/pages/AdminLoginPage'
+import { AgentLoginPage } from '../modules/auth/pages/AgentLoginPage'
 import { AgentDashboardPage } from '../modules/agent/pages/AgentDashboardPage'
 import { AgentOperationsPage } from '../modules/agent/pages/AgentOperationsPage'
 import { AgentExpensesPage } from '../modules/agent/pages/AgentExpensesPage'
@@ -11,8 +13,8 @@ import { AdminTransactionsPage } from '../modules/admin/pages/AdminTransactionsP
 import { AdminExpensesPage } from '../modules/admin/pages/AdminExpensesPage'
 import { AdminClosuresPage } from '../modules/admin/pages/AdminClosuresPage'
 import { AdminAuditPage } from '../modules/admin/pages/AdminAuditPage'
+import { AdminAgentsExtensionsPage } from '../modules/admin/pages/AdminAgentsExtensionsPage'
 import { NotFoundPage } from '../modules/common/pages/NotFoundPage'
-import { PlaceholderPage } from '../modules/common/pages/PlaceholderPage'
 import { AuthLayout } from '../shared/layouts/AuthLayout'
 import { AgentLayout } from '../shared/layouts/AgentLayout'
 import { AdminLayout } from '../shared/layouts/AdminLayout'
@@ -25,7 +27,17 @@ export const appRouter = createBrowserRouter([
   {
     path: '/connexion',
     element: <AuthLayout />,
-    children: [{ index: true, element: <LoginPage /> }],
+    children: [{ index: true, element: <AuthLandingPage /> }],
+  },
+  {
+    path: '/admin/connexion',
+    element: <AuthLayout />,
+    children: [{ index: true, element: <AdminLoginPage /> }],
+  },
+  {
+    path: '/agent/connexion',
+    element: <AuthLayout />,
+    children: [{ index: true, element: <AgentLoginPage /> }],
   },
   {
     element: <RequireAuth />,
@@ -81,32 +93,12 @@ export const appRouter = createBrowserRouter([
           {
             path: '/admin/utilisateurs',
             element: <AdminLayout />,
-            children: [
-              {
-                index: true,
-                element: (
-                  <PlaceholderPage
-                    title="Gestion Utilisateurs"
-                    description="Creation, activation, desactivation et affectation des comptes Agent/Admin."
-                  />
-                ),
-              },
-            ],
+            children: [{ index: true, element: <AdminAgentsExtensionsPage /> }],
           },
           {
             path: '/admin/extensions',
             element: <AdminLayout />,
-            children: [
-              {
-                index: true,
-                element: (
-                  <PlaceholderPage
-                    title="Gestion Extensions"
-                    description="Parametrage des points de service, services actifs et affectations terrain."
-                  />
-                ),
-              },
-            ],
+            children: [{ index: true, element: <AdminAgentsExtensionsPage /> }],
           },
           {
             path: '/admin/rapports',

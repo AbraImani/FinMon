@@ -1,8 +1,9 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './authContext'
 import type { UserRole } from '../types/domain'
 
 export function RequireRole({ allowedRoles }: { allowedRoles: UserRole[] }) {
+  const location = useLocation()
   const { profile, loading } = useAuth()
 
   if (loading) {
@@ -14,7 +15,17 @@ export function RequireRole({ allowedRoles }: { allowedRoles: UserRole[] }) {
   }
 
   if (!profile.role || !allowedRoles.includes(profile.role)) {
-    return <Navigate to={profile.role === 'admin' ? '/admin' : '/connexion'} replace />
+    const fallback = location.pathname.startsWith('/agent')
+      ? '/agent'
+      : location.pathname.startsWith('/admin')
+        ? '/admin'
+        : profile.role === 'admin'
+          ? '/admin'
+          : profile.role === 'agent'
+            ? '/agent'
+            : '/connexion'
+
+    return <Navigate to={fallback} replace />
   }
 
   return <Outlet />

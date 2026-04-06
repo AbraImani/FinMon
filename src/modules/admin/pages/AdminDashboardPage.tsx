@@ -32,6 +32,7 @@ export function AdminDashboardPage() {
             <li className="rounded-lg bg-slate-50 px-3 py-2">6 depenses en attente</li>
             <li className="rounded-lg bg-slate-50 px-3 py-2">4 clotures a verifier</li>
             <li className="rounded-lg bg-slate-50 px-3 py-2">1 taux de change a mettre a jour</li>
+            <li className="rounded-lg bg-slate-50 px-3 py-2">Invitation agents et extensions a configurer</li>
           </ul>
         </article>
 

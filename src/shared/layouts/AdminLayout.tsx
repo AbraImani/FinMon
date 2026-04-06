@@ -2,8 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 const menu = [
   { to: '/admin', label: 'Dashboard' },
-  { to: '/admin/utilisateurs', label: 'Utilisateurs' },
-  { to: '/admin/extensions', label: 'Extensions' },
+  { to: '/admin/utilisateurs', label: 'Agents / Extensions' },
   { to: '/admin/transactions', label: 'Transactions' },
   { to: '/admin/depenses', label: 'Depenses' },
   { to: '/admin/rapports', label: 'Rapports' },

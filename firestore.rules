@@ -118,6 +118,16 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    match /extensions/{extensionId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /invitations/{invitationId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
     match /transactions/{transactionId} {
       allow read: if isAdmin() || (isAgent() && resource.data.createdById == request.auth.uid);
       allow create: if isAgent()
