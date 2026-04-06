@@ -25,6 +25,28 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
+    function isWhitelistedAdminEmail() {
+      return signedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email.lower() in [
+          'eliaraphael19@gmail.com',
+          'abrahamfaith325@gmail.com'
+        ];
+    }
+
+    function adminBootstrapKeys() {
+      return request.resource.data.keys().hasOnly([
+        'fullName',
+        'email',
+        'role',
+        'status',
+        'extensionIds',
+        'profileStage',
+        'createdAt',
+        'updatedAt'
+      ]);
+    }
+
     function transactionCreateKeys() {
       return request.resource.data.keys().hasAll([
         'operationRef',
@@ -115,7 +137,28 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if isAdmin() || isOwner(uid);
-      allow create, update, delete: if isAdmin();
+      allow create: if isAdmin()
+        || (isOwner(uid)
+          && isWhitelistedAdminEmail()
+          && adminBootstrapKeys()
+          && request.resource.data.role == 'admin'
+          && request.resource.data.status == 'active'
+          && request.resource.data.email is string
+          && request.resource.data.email.lower() == request.auth.token.email.lower()
+          && request.resource.data.fullName is string
+          && request.resource.data.extensionIds is list);
+      allow update: if isAdmin()
+        || (isOwner(uid)
+          && isWhitelistedAdminEmail()
+          && adminBootstrapKeys()
+          && resource.data.role == 'admin'
+          && request.resource.data.role == 'admin'
+          && request.resource.data.status == 'active'
+          && request.resource.data.email is string
+          && request.resource.data.email.lower() == request.auth.token.email.lower()
+          && request.resource.data.fullName is string
+          && request.resource.data.extensionIds is list);
+      allow delete: if isAdmin();
     }
 
     match /extensions/{extensionId} {

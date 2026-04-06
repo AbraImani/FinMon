@@ -42,8 +42,12 @@ async function findProfileByEmail(email: string) {
     limit(1),
   )
 
-  const profileSnapshot = await getDocs(emailQuery)
-  return profileSnapshot.empty ? null : ({ id: profileSnapshot.docs[0].id, ...profileSnapshot.docs[0].data() } as UserProfile & { id: string })
+  try {
+    const profileSnapshot = await getDocs(emailQuery)
+    return profileSnapshot.empty ? null : ({ id: profileSnapshot.docs[0].id, ...profileSnapshot.docs[0].data() } as UserProfile & { id: string })
+  } catch {
+    return null
+  }
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -160,11 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const profileRef = doc(firestoreDb, 'users', credential.user.uid)
         const profileSnapshot = await getDoc(profileRef)
-        const profileData = profileSnapshot.exists()
-          ? (profileSnapshot.data() as UserProfile)
-          : credential.user.email
-            ? await findProfileByEmail(credential.user.email)
-            : null
+        const profileData = profileSnapshot.exists() ? (profileSnapshot.data() as UserProfile) : null
 
         const adminProfile: UserProfile = {
           fullName: credential.user.displayName?.trim() || credential.user.email || 'Administrateur',

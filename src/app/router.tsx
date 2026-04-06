@@ -1,7 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { RequireAuth } from '../shared/auth/RequireAuth'
 import { RequireRole } from '../shared/auth/RequireRole'
-import { AuthLandingPage } from '../modules/auth/pages/AuthLandingPage'
 import { AdminLoginPage } from '../modules/auth/pages/AdminLoginPage'
 import { AgentLoginPage } from '../modules/auth/pages/AgentLoginPage'
 import { AgentDashboardPage } from '../modules/agent/pages/AgentDashboardPage'
@@ -27,7 +26,7 @@ export const appRouter = createBrowserRouter([
   {
     path: '/connexion',
     element: <AuthLayout />,
-    children: [{ index: true, element: <AuthLandingPage /> }],
+    children: [{ index: true, element: <AgentLoginPage /> }],
   },
   {
     path: '/admin/connexion',
