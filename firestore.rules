@@ -1,0 +1,206 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasProfile() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return hasProfile() && profile().data.role == 'admin' && profile().data.status == 'active';
+    }
+
+    function isAgent() {
+      return hasProfile() && profile().data.role == 'agent' && profile().data.status == 'active';
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function transactionCreateKeys() {
+      return request.resource.data.keys().hasAll([
+        'operationRef',
+        'dateKey',
+        'serviceId',
+        'serviceName',
+        'operationType',
+        'currency',
+        'amount',
+        'commission',
+        'note',
+        'createdAt',
+        'createdById',
+        'createdByName',
+        'status'
+      ]) && request.resource.data.keys().hasOnly([
+        'operationRef',
+        'dateKey',
+        'serviceId',
+        'serviceName',
+        'operationType',
+        'currency',
+        'amount',
+        'commission',
+        'note',
+        'createdAt',
+        'createdById',
+        'createdByName',
+        'status'
+      ]);
+    }
+
+    function expenseKeys() {
+      return request.resource.data.keys().hasAll([
+        'dateKey',
+        'category',
+        'amount',
+        'currency',
+        'reason',
+        'status',
+        'submittedAt',
+        'reviewedAt',
+        'reviewNote',
+        'createdById',
+        'createdByName'
+      ]) && request.resource.data.keys().hasOnly([
+        'dateKey',
+        'category',
+        'amount',
+        'currency',
+        'reason',
+        'status',
+        'submittedAt',
+        'reviewedAt',
+        'reviewNote',
+        'createdById',
+        'createdByName',
+        'reviewedById',
+        'reviewedByName'
+      ]);
+    }
+
+    function auditKeys() {
+      return request.resource.data.keys().hasAll([
+        'actorId',
+        'actorName',
+        'module',
+        'action',
+        'targetCollection',
+        'targetId',
+        'before',
+        'after',
+        'metadata',
+        'createdAt'
+      ]) && request.resource.data.keys().hasOnly([
+        'actorId',
+        'actorName',
+        'module',
+        'action',
+        'targetCollection',
+        'targetId',
+        'before',
+        'after',
+        'metadata',
+        'createdAt'
+      ]);
+    }
+
+    match /users/{uid} {
+      allow read: if isAdmin() || isOwner(uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if isAdmin() || (isAgent() && resource.data.createdById == request.auth.uid);
+      allow create: if isAgent()
+        && transactionCreateKeys()
+        && request.resource.data.operationRef == transactionId
+        && request.resource.data.createdById == request.auth.uid
+        && request.resource.data.dateKey is string
+        && request.resource.data.serviceId is string
+        && request.resource.data.serviceName is string
+        && request.resource.data.operationType in ['depot', 'retrait', 'transfert']
+        && request.resource.data.currency in ['USD', 'CDF']
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.commission is number
+        && request.resource.data.commission >= 0
+        && request.resource.data.note is string
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.createdByName is string
+        && request.resource.data.status == 'posted';
+      allow update, delete: if isAdmin();
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isAdmin() || (isAgent() && resource.data.createdById == request.auth.uid);
+
+      allow create: if isAgent()
+        && expenseKeys()
+        && request.resource.data.createdById == request.auth.uid
+        && request.resource.data.dateKey is string
+        && request.resource.data.category is string
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.currency in ['USD', 'CDF']
+        && request.resource.data.reason is string
+        && request.resource.data.submittedAt is timestamp
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.reviewNote == ''
+        && request.resource.data.createdByName is string
+        && request.resource.data.status == 'pending';
+
+      allow update, delete: if false;
+    }
+
+    match /dailyClosures/{closureId} {
+      allow read: if isAdmin() || (isAgent() && resource.data.createdById == request.auth.uid);
+
+      allow create, update, delete: if false;
+    }
+
+    match /agentBalances/{agentId} {
+      allow read: if isAdmin() || isOwner(agentId);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /exchangeRates/{rateId} {
+      allow read: if signedIn();
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasAll(['usdToCdf', 'updatedAt', 'updatedById', 'updatedByName'])
+        && request.resource.data.keys().hasOnly(['usdToCdf', 'updatedAt', 'updatedById', 'updatedByName'])
+        && request.resource.data.usdToCdf is number
+        && request.resource.data.usdToCdf > 0
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.updatedById == request.auth.uid
+        && request.resource.data.updatedByName is string;
+      allow delete: if isAdmin();
+    }
+
+    match /auditLogs/{auditId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && auditKeys()
+        && request.resource.data.actorId == request.auth.uid
+        && request.resource.data.actorName is string
+        && request.resource.data.module in ['transactions', 'expenses', 'closures', 'rates']
+        && request.resource.data.action is string
+        && request.resource.data.targetCollection is string
+        && request.resource.data.targetId is string
+        && request.resource.data.createdAt is timestamp;
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

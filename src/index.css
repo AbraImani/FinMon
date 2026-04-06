@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+:root {
+  --elbar-bg: #f6f8fb;
+  --elbar-surface: #ffffff;
+  --elbar-ink: #0f172a;
+  --elbar-muted: #475569;
+  --elbar-brand: #0b6e4f;
+  --elbar-brand-strong: #095a40;
+  --elbar-accent: #0ea5a4;
+  --elbar-border: #e2e8f0;
+  --elbar-warning: #d97706;
+  --elbar-danger: #dc2626;
+  --elbar-success: #16a34a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--elbar-ink);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(14, 165, 164, 0.08), transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(11, 110, 79, 0.08), transparent 35%),
+    var(--elbar-bg);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.fintech-card {
+  border: 1px solid var(--elbar-border);
+  border-radius: 14px;
+  background: var(--elbar-surface);
+  box-shadow: 0 12px 24px -16px rgba(15, 23, 42, 0.3);
+}
+
+.kpi-value {
+  font-variant-numeric: tabular-nums;
+}

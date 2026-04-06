@@ -1,0 +1,20 @@
+{
+  "name": "ELBAR COMPANY",
+  "short_name": "ELBAR",
+  "description": "Gestion fintech des operations Mobile Money et reconciliation journaliere.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#0b6e4f",
+  "lang": "fr",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
