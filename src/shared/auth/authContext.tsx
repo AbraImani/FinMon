@@ -15,7 +15,7 @@ import {
   signOut,
   type User,
 } from 'firebase/auth'
-import { collection, doc, getDoc, getDocs, onSnapshot, limit, query, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, onSnapshot, limit, query, setDoc, where } from 'firebase/firestore'
 import { firebaseAuth, firestoreDb } from '../config/firebase'
 import type { AppUserContext, UserProfile } from '../types/domain'
 
@@ -166,14 +166,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             ? await findProfileByEmail(credential.user.email)
             : null
 
-        if (!profileData) {
-          await signOut(firebaseAuth)
-          throw new Error('Compte Google autorise mais profil administrateur introuvable.')
+        const adminProfile: UserProfile = {
+          fullName: credential.user.displayName?.trim() || credential.user.email || 'Administrateur',
+          email: credential.user.email || email,
+          role: 'admin',
+          status: 'active',
+          extensionIds: [],
+          profileStage: 'completed',
         }
 
-        if (profileData.role !== 'admin') {
-          await signOut(firebaseAuth)
-          throw new Error('Le compte Google autorise doit etre configure comme administrateur.')
+        if (!profileData) {
+          await setDoc(profileRef, adminProfile, { merge: true })
+          return adminProfile
+        }
+
+        if (profileData.role !== 'admin' || profileData.status !== 'active') {
+          const normalizedProfile = {
+            ...profileData,
+            ...adminProfile,
+          }
+
+          await setDoc(profileRef, normalizedProfile, { merge: true })
+          return normalizedProfile
         }
 
         return profileData

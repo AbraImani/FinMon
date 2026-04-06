@@ -68,45 +68,28 @@ export function LoginPage({ mode }: LoginPageProps) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-lg">
+    <div className="mx-auto w-full max-w-xl">
       <div className="text-center">
-        <p className="mx-auto inline-flex items-center rounded-full border border-[rgba(11,110,79,0.16)] bg-[rgba(11,110,79,0.06)] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--elbar-brand)]">
+        <p className="mx-auto inline-flex items-center rounded-full border border-[rgba(11,110,79,0.14)] bg-[rgba(11,110,79,0.06)] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--elbar-brand)]">
           Elbar Company
         </p>
         <h1 className="mt-5 text-3xl font-black text-slate-950 sm:text-4xl">Connexion</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[var(--elbar-muted)]">
-          Acces rapide et professionnel selon votre profil.
-        </p>
       </div>
 
       {mode === 'admin' ? (
-        <div className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)] sm:p-6">
-          <div className="flex items-center justify-center gap-2 text-sm font-semibold text-slate-700">
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--elbar-brand)]" />
-            Administration
-          </div>
-
+        <div className="mt-8 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_22px_50px_-36px_rgba(15,23,42,0.28)] sm:p-8">
           <button
             type="button"
             onClick={handleGoogleAdminSignIn}
             disabled={loading}
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-2xl bg-slate-950 px-4 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-12 w-full items-center justify-center rounded-2xl bg-slate-950 px-4 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? 'Connexion Google...' : 'Se connecter avec Google'}
           </button>
-
-          <p className="mt-4 text-center text-xs leading-5 text-slate-500">
-            Route d&apos;accès: <span className="font-semibold text-slate-700">/admin/connexion</span>
-          </p>
         </div>
       ) : (
-        <form className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)] sm:p-6" onSubmit={handleSubmit}>
-          <div className="flex items-center justify-center gap-2 text-sm font-semibold text-slate-700">
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--elbar-accent)]" />
-            Espace agent
-          </div>
-
-          <div className="mt-6 space-y-4">
+        <form className="mt-8 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_22px_50px_-36px_rgba(15,23,42,0.28)] sm:p-8" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-700" htmlFor="email">
                 Adresse email
@@ -147,10 +130,6 @@ export function LoginPage({ mode }: LoginPageProps) {
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
           </div>
-
-          <p className="mt-4 text-center text-xs leading-5 text-slate-500">
-            Route d&apos;accès: <span className="font-semibold text-slate-700">/agent/connexion</span>
-          </p>
         </form>
       )}
     </div>
